@@ -19,7 +19,6 @@ public class AppOrderTest {
     @BeforeAll
     public static void setupAll() {
         WebDriverManager.chromedriver().setup();
-//        System.setProperty("webdriver.chrome.driver.setup()", "driver/win/chromedriver.exe");
     }
 
     @BeforeEach
@@ -54,7 +53,7 @@ public class AppOrderTest {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79111231212");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.cssSelector("button.button")).click();
-        var actualText = driver.findElement(By.cssSelector("[data-test-id='name'] span.input__sub")).getText().trim();
+        var actualText = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         assertEquals("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.", actualText);
     }
 
@@ -64,7 +63,7 @@ public class AppOrderTest {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79111231212");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.cssSelector("button.button")).click();
-        var actualText = driver.findElement(By.cssSelector("[data-test-id='name'] span.input__sub")).getText().trim();
+        var actualText = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         assertEquals("Поле обязательно для заполнения", actualText);
     }
 
@@ -74,8 +73,18 @@ public class AppOrderTest {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("8911123");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.cssSelector("button.button")).click();
-        var actualText = driver.findElement(By.cssSelector("[data-test-id='phone'] span.input__sub")).getText().trim();
+        var actualText = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
         assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.", actualText);
+    }
+
+    @Test
+    public void testEmptyPhone(){
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иванов Иван");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("");
+        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+        driver.findElement(By.cssSelector("button.button")).click();
+        var actualText = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
+        assertEquals("Поле обязательно для заполнения", actualText);
     }
 
     @Test
@@ -83,7 +92,6 @@ public class AppOrderTest {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иванов Иван");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79111231212");
         driver.findElement(By.cssSelector("button.button")).click();
-        var actualText = driver.findElement(By.cssSelector("[data-test-id='phone'] span.input__sub")).getText().trim();
         assertTrue(driver.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid")).isDisplayed());
     }
 }
